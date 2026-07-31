@@ -1,5 +1,5 @@
 const CACHE_NAME = 'rhinestone-calculator-v1';
-const ASSETS = ['./', './index.html', './manifest.json', './images/icon-192.svg', './images/icon-512.svg'];
+const ASSETS = ['./', './index.html', './manifest.json', './images/icon-512.svg'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
