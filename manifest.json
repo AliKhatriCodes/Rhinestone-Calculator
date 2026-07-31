@@ -1,0 +1,22 @@
+{
+  "name": "Rhinestone Calculator",
+  "short_name": "Calc",
+  "description": "Rhinestone Factory Billing Calculator",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f0c29",
+  "theme_color": "#0f0c29",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
