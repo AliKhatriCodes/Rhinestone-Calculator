@@ -229,7 +229,7 @@
         </div>
 
         <!-- Inputs Section -->
-        <div id="inputs" class="w-full glass-card rounded-2xl p-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 slide-in" style="animation-delay: 0.4s;">
+        <div id="inputs" class="w-full glass-card rounded-2xl p-2 grid gap-2 slide-in" style="animation-delay: 0.4s; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); grid-auto-rows: auto;">
             
         </div>
 
@@ -419,6 +419,7 @@
                 
                 const inputDiv = document.createElement('div');
                 inputDiv.className = 'glass-card rounded-xl p-2 slide-in w-full';
+                inputDiv.style.minWidth = '140px';
                 
                 // Normal items with quantity
                 inputDiv.innerHTML = `
@@ -495,7 +496,9 @@
                 
                 const inputDiv = document.createElement('div');
                 inputDiv.id = 'applic-input';
-                inputDiv.className = 'glass-card rounded-xl p-4 col-span-2 slide-in';
+                inputDiv.className = 'glass-card rounded-xl p-3 slide-in w-full';
+                inputDiv.style.gridColumn = '1 / -1';
+                inputDiv.style.minWidth = '200px';
                 inputDiv.innerHTML = `
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-white font-bold text-sm bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">${item.name}</span>
