@@ -156,9 +156,15 @@
         }
 
         #inputs {
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 12px;
             grid-auto-rows: auto;
+            grid-auto-flow: row;
+        }
+
+        #inputs > div {
+            min-width: 0;
         }
 
         .input-field {
@@ -519,7 +525,7 @@
                 
                 const inputDiv = document.createElement('div');
                 inputDiv.className = 'glass-card rounded-xl p-2 slide-in w-full';
-                inputDiv.style.minWidth = '140px';
+                inputDiv.style.minWidth = '0';
                 
                 // Normal items with quantity
                 inputDiv.innerHTML = `
@@ -598,7 +604,8 @@
                 inputDiv.id = 'applic-input';
                 inputDiv.className = 'glass-card rounded-xl p-3 slide-in w-full';
                 inputDiv.style.gridColumn = '1 / -1';
-                inputDiv.style.minWidth = '200px';
+                inputDiv.style.minWidth = '0';
+                inputDiv.style.width = '100%';
                 inputDiv.innerHTML = `
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-white font-bold text-sm bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">${item.name}</span>
