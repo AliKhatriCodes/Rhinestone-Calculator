@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0f0c29">
+  <title>Rhinestone Calculator</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="images/icon-512.svg" sizes="512x512" type="image/svg+xml">
+  <meta name="description" content="Mobile-first rhinestone billing calculator - PWA ready">
+  <style>
+    :root{--bg:#0f0c29;--card:rgba(255,255,255,0.03);--muted:rgba(255,255,255,0.6);--accent:#7c3aed}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#0f0c29 0%,#1a1a2e 100%);color:#fff}
+    .container{max-width:980px;margin:0 auto;padding:16px}
+    header{display:flex;align-items:center;gap:12px}
+    .logo{width:52px;height:52px;border-radius:12px;overflow:hidden;flex-shrink:0}
+    .title{font-size:18px;font-weight:700}
+    .subtitle{font-size:12px;color:var(--muted)}
+    .spacer{flex:1}
+    .btn{background:var(--card);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:10px;color:#fff}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,0.04);padding:12px;border-radius:12px;margin-top:12px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+    .item-label{display:flex;align-items:center;gap:8px;padding:8px;border-radius:10px;cursor:pointer}
+    input[type=number]{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff}
+    .muted{color:var(--muted);font-size:13px}
+    .total-box{background:linear-gradient(90deg,#667eea,#764ba2);padding:12px;border-radius:12px;text-align:center;font-weight:700;font-size:22px;margin-top:12px}
+    .small{font-size:12px}
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:50}
+    .modal.open{display:flex}
+    .modal .panel{width:min(720px,96%);background:#0b1220;padding:14px;border-radius:12px}
+    @media (max-width:420px){.grid{grid-template-columns:repeat(2,1fr)}.title{font-size:16px}.logo{width:44px;height:44px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="images/icon-512.svg" alt="app icon" class="logo">
+      <div>
+        <div class="title">Rhinestone Calculator</div>
+        <div class="subtitle">Mobile-first billing for rhinestones</div>
+      </div>
+      <div class="spacer"></div>
+      <label class="small" for="applicToggle">Applic <input id="applicToggle" type="checkbox" style="margin-left:8px"></label>
+      <button id="openSettings" class="btn" aria-label="Open settings" style="margin-left:8px">⚙️</button>
+    </header>
+
+    <section class="card" aria-labelledby="itemsHeading">
+      <h2 id="itemsHeading" class="small">Select Items</h2>
+      <div class="grid" id="itemsGrid" role="list"></div>
+    </section>
+
+    <section id="inputs" class="card" aria-live="polite"></section>
+
+    <div id="total" class="total-box">Total: <span id="grandTotal">0.00</span></div>
+  </div>
+
+  <div id="settingsModal" class="modal" role="dialog" aria-modal="true">
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h3 style="margin:0">Settings</h3>
+        <button id="closeSettings" class="btn">Close</button>
+      </div>
+      <div id="settingsContent"></div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button id="saveSettings" class="btn">Save</button>
+        <button id="resetSettings" class="btn">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Defaults
+    const DEFAULTS = { '6SS':0.03,'10SS':0.03,'16SS':0.05,'4x4':0.15,'6x6':0.25,'2.5x5':0.15,'3x7':0.25 };
+    const LABELS = { '6SS':'6SS','10SS':'10SS','16SS':'16SS','4x4':'4/4 Chorsi','6x6':'6/6 Chorsi','2.5x5':'2.5/5 Tube','3x7':'3/7 Tube' };
+    const STORAGE_KEY = 'rhinestone.settings.v1';
+    let inchPrice = 2;
+
+    // State
+    const settings = { prices: {...DEFAULTS}, inchPrice };
+
+    // DOM
+    const itemsGrid = document.getElementById('itemsGrid');
+    const inputsEl = document.getElementById('inputs');
+    const grandEl = document.getElementById('grandTotal');
+    const applicToggle = document.getElementById('applicToggle');
+
+    function loadSettings(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY); if(!raw) return;
+        const parsed = JSON.parse(raw);
+        if(parsed.prices) Object.assign(settings.prices, parsed.prices);
+        if(parsed.inchPrice) settings.inchPrice = parsed.inchPrice;
+      }catch(e){console.warn('Failed to load settings',e)}
+    }
+
+    function saveSettingsToStorage(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ prices: settings.prices, inchPrice: settings.inchPrice }));
+    }
+
+    function resetSettings(){
+      Object.assign(settings.prices, DEFAULTS); settings.inchPrice = 2; saveSettingsToStorage(); renderSettings(); renderItems(); buildInputs(); recalc();
+    }
+
+    function renderItems(){
+      itemsGrid.innerHTML = '';
+      Object.keys(LABELS).forEach(key=>{
+        const lbl = document.createElement('label'); lbl.className='item-label card'; lbl.setAttribute('role','listitem');
+        lbl.innerHTML = `<input type='checkbox' name='item' value='${key}' aria-label='${LABELS[key]}'> <div><div style="font-weight:700">${LABELS[key]}</div><div class='muted small'>Price ${settings.prices[key].toFixed(2)} Rupa</div></div>`;
+        itemsGrid.appendChild(lbl);
+      });
+    }
+
+    function buildInputs(){
+      inputsEl.innerHTML = '';
+      const checked = document.querySelectorAll('input[name=item]:checked');
+      if(checked.length===0) inputsEl.innerHTML = '<div class="muted">No items selected</div>';
+
+      checked.forEach(checkbox=>{
+        const key = checkbox.value;
+        const wrapper = document.createElement('div'); wrapper.className='card';
+        wrapper.innerHTML = `<label for='qty-${key}' style='font-weight:700'>${LABELS[key]}</label>
+          <input id='qty-${key}' type='number' min='0' step='1' value='1' aria-label='Quantity for ${LABELS[key]}'>
+          <div class='muted small'>Unit: ${settings.prices[key].toFixed(2)} Rupa</div>
+          <div id='item-total-${key}' style='margin-top:8px;font-weight:700'>Total: 0.00</div>`;
+        inputsEl.appendChild(wrapper);
+      });
+
+      // Applic block
+      if(applicToggle.checked){
+        const a = document.createElement('div'); a.className='card'; a.style.gridColumn='1/-1';
+        a.innerHTML = `<label style='font-weight:700'>Applic</label>
+          <div style='display:flex;gap:8px'><input id='dim-a' type='number' placeholder='Dim 1' min='0' step='0.1'><input id='dim-b' type='number' placeholder='Dim 2' min='0' step='0.1'></div>
+          <div class='muted small'>Price per inch: <span id='inch-price'>${settings.inchPrice.toFixed(2)}</span> Rupa</div>
+          <div id='item-total-applic' style='margin-top:8px;font-weight:700'>Total: 0.00</div>`;
+        inputsEl.appendChild(a);
+      }
+
+      // attach event listeners
+      inputsEl.querySelectorAll('input[type=number]').forEach(inp=>inp.addEventListener('input', recalc));
+      inputsEl.querySelectorAll('input[id^="qty-"]').forEach(i=>i.addEventListener('input', ()=>updateItemTotal(i.id.replace('qty-',''))));
+      recalc();
+    }
+
+    function updateItemTotal(key){
+      const qty = parseFloat(document.getElementById(`qty-${key}`)?.value) || 0;
+      const total = qty * (settings.prices[key] || 0);
+      const el = document.getElementById(`item-total-${key}`); if(el) el.textContent = `Total: ${total.toFixed(2)}`;
+      recalc();
+    }
+
+    function recalc(){
+      let sum = 0;
+      Object.keys(LABELS).forEach(key=>{
+        const qtyEl = document.getElementById(`qty-${key}`);
+        if(qtyEl){ const qty = parseFloat(qtyEl.value)||0; sum += qty * (settings.prices[key]||0); const el = document.getElementById(`item-total-${key}`); if(el) el.textContent = `Total: ${(qty*(settings.prices[key]||0)).toFixed(2)}`; }
+      });
+      if(applicToggle.checked){
+        const d1 = parseFloat(document.getElementById('dim-a')?.value)||0; const d2 = parseFloat(document.getElementById('dim-b')?.value)||0; const inches = (d1 + d2)/2; const appTotal = inches * settings.inchPrice; const appEl = document.getElementById('item-total-applic'); if(appEl) appEl.textContent = `Total: ${appTotal.toFixed(2)}`; sum += appTotal;
+      }
+      grandEl.textContent = sum.toFixed(2);
+    }
+
+    // Settings UI
+    const settingsModal = document.getElementById('settingsModal');
+    const settingsContent = document.getElementById('settingsContent');
+    document.getElementById('openSettings').addEventListener('click', ()=>{ renderSettings(); settingsModal.classList.add('open'); });
+    document.getElementById('closeSettings').addEventListener('click', ()=>settingsModal.classList.remove('open'));
+    document.getElementById('saveSettings').addEventListener('click', ()=>{ applySettings(); settingsModal.classList.remove('open'); });
+    document.getElementById('resetSettings').addEventListener('click', ()=>{ if(confirm('Reset to defaults?')) resetSettings(); });
+
+    function renderSettings(){
+      settingsContent.innerHTML = '';
+      // prices
+      Object.keys(LABELS).forEach(key=>{
+        const row = document.createElement('div'); row.style.display='flex'; row.style.gap='8px'; row.style.alignItems='center'; row.style.marginBottom='8px';
+        const label = document.createElement('div'); label.style.flex='1'; label.textContent = LABELS[key];
+        const input = document.createElement('input'); input.type='number'; input.step='0.01'; input.value = settings.prices[key].toFixed(2); input.id = `setting-${key}`; input.style.width='120px';
+        row.appendChild(label); row.appendChild(input); settingsContent.appendChild(row);
+      });
+      const inchRow = document.createElement('div'); inchRow.style.marginTop='6px'; inchRow.innerHTML = `<label style='display:block'>Applic price per inch</label><input type='number' id='setting-inch' step='0.01' value='${settings.inchPrice.toFixed(2)}' style='width:140px'>`;
+      settingsContent.appendChild(inchRow);
+    }
+
+    function applySettings(){
+      Object.keys(LABELS).forEach(key=>{
+        const v = parseFloat(document.getElementById(`setting-${key}`).value) || 0; settings.prices[key] = v;
+      });
+      const ip = parseFloat(document.getElementById('setting-inch').value) || 0; settings.inchPrice = Math.max(0, ip);
+      saveSettingsToStorage(); renderItems(); buildInputs(); recalc();
+    }
+
+    // initial load
+    loadSettings(); renderItems(); buildInputs();
+
+    // events
+    document.addEventListener('change', e=>{ if(e.target && e.target.matches('input[name=item]')) buildInputs(); });
+    applicToggle.addEventListener('change', buildInputs);
+
+    // service worker
+    if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }); }
+  </script>
+</body>
+</html>
