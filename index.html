@@ -156,15 +156,9 @@
         }
 
         #inputs {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 12px;
             grid-auto-rows: auto;
-            grid-auto-flow: row;
-        }
-
-        #inputs > div {
-            min-width: 0;
         }
 
         .input-field {
@@ -525,31 +519,23 @@
                 
                 const inputDiv = document.createElement('div');
                 inputDiv.className = 'glass-card rounded-xl p-2 slide-in w-full';
-                inputDiv.style.minWidth = '0';
+                inputDiv.style.minWidth = '140px';
                 
                 // Normal items with quantity
                 inputDiv.innerHTML = `
                     <div class="mb-2">
-                        <span class="text-white font-bold text-sm bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">${item.name}</span>
+                        <span class="text-white font-semibold text-sm">${item.name}</span>
                     </div>
                     <input type="number" 
                            id="qty-${itemKey}" 
                            placeholder="Qty" 
-                           class="w-full input-field text-white px-2 py-2 sm:px-3 sm:py-3 rounded-xl mb-2"
+                           class="w-full input-field text-white px-2 py-2 rounded-xl mb-2 text-sm"
                            oninput="saveAndCalculate('${itemKey}')"
                            value="${savedQty}">
-                    ${manualMode[itemKey] ? `
-                        <input type="number" 
-                               id="price-${itemKey}" 
-                               placeholder="Price" 
-                               class="w-full input-field text-white px-2 py-2 sm:px-3 sm:py-3 rounded-xl mb-2"
-                               oninput="saveAndCalculate('${itemKey}')"
-                               step="0.01"
-                               value="${savedPrice}">
-                    ` : `
-                        <div class="text-gray-300 text-[12px] sm:text-xs">Price: ${item.price} Rupa</div>
-                    `}
-                    <div class="text-green-400 text-[12px] sm:text-sm mt-2 font-bold" id="total-${itemKey}">Total: 0</div>
+                    <div class="flex items-center justify-between text-gray-300 text-[12px] mb-2">
+                        <span>₹ ${item.price.toFixed(2)}</span>
+                        <span id="total-${itemKey}">Total: 0</span>
+                    </div>
                 `;
                 inputsContainer.appendChild(inputDiv);
             });
@@ -604,29 +590,32 @@
                 inputDiv.id = 'applic-input';
                 inputDiv.className = 'glass-card rounded-xl p-3 slide-in w-full';
                 inputDiv.style.gridColumn = '1 / -1';
-                inputDiv.style.minWidth = '0';
-                inputDiv.style.width = '100%';
                 inputDiv.innerHTML = `
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-white font-bold text-sm bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">${item.name}</span>
+                    <div class="mb-3">
+                        <span class="text-white font-semibold text-sm">Applic</span>
                     </div>
-                    <div class="flex flex-col gap-3 md:flex-row md:items-center mb-3">
+                    <div class="flex flex-col gap-2 mb-3">
                         <input type="number" 
                                id="dimension1-${itemKey}" 
-                               placeholder="Dimension 1" 
-                               class="w-full md:w-1/2 input-field text-white px-4 py-3 rounded-xl"
+                               placeholder="Dim 1" 
+                               class="w-full input-field text-white px-2 py-2 rounded-xl text-sm"
                                oninput="calculateApplicDimensions('${itemKey}')"
                                value="${inputValues[itemKey]?.dim1 || ''}">
                         <input type="number" 
                                id="dimension2-${itemKey}" 
-                               placeholder="Dimension 2" 
-                               class="w-full md:w-1/2 input-field text-white px-4 py-3 rounded-xl"
+                               placeholder="Dim 2" 
+                               class="w-full input-field text-white px-2 py-2 rounded-xl text-sm"
                                oninput="calculateApplicDimensions('${itemKey}')"
                                value="${inputValues[itemKey]?.dim2 || ''}">
                     </div>
-                    <div class="text-gray-300 text-xs mb-2">Total inches: <span id="total-inches-${itemKey}">0</span></div>
-                    <div class="text-gray-300 text-xs mb-2">Price per inch: <span id="price-per-inch-${itemKey}">${inchPrice}</span> Rupa</div>
-                    <div class="text-green-400 text-sm mt-2 font-bold" id="total-${itemKey}">Total: 0</div>
+                    <div class="flex items-center justify-between text-gray-300 text-[12px] mb-1">
+                        <span>Inches</span>
+                        <span id="total-inches-${itemKey}">0</span>
+                    </div>
+                    <div class="flex items-center justify-between text-gray-300 text-[12px] mb-2">
+                        <span>₹${inchPrice.toFixed(2)} / in</span>
+                        <span id="total-${itemKey}">Total: 0</span>
+                    </div>
                 `;
                 inputsContainer.appendChild(inputDiv);
                 
