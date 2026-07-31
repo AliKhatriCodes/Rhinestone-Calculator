@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>calculater</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.6); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animated-bg {
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1a1a2e);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-hover {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-hover:hover::before {
+            left: 100%;
+        }
+
+        .btn-hover:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+            outline: none;
+        }
+
+        .checkbox-custom {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .checkbox-custom:checked {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            animation: pulse-glow 2s infinite;
+        }
+
+        .checkbox-custom:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        .total-glow {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 200% 200%;
+            animation: gradientBG 5s ease infinite;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="w-full glass-card py-4 px-6 flex items-center justify-between fixed top-0 left-0 z-50">
+        <div class="flex items-center gap-3">
+            <img src="images/logo.png" alt="Logo" class="w-10 h-10 rounded-lg object-cover">
+            <div>
+                <h1 class="text-white text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">Rhinestone Calculator</h1>
+                <p class="text-gray-400 text-xs">Ali Khatri Codes</p>
+            </div>
+        </div>
+        <div class="flex gap-3">
+            <label class="flex items-center gap-2 text-white text-sm glass-card px-4 py-2 rounded-xl cursor-pointer btn-hover">
+                <input type="checkbox" id="applicToggle" class="checkbox-custom" onchange="toggleApplic()">
+                Applic
+            </label>
+            <button onclick="toggleSettings()" class="text-white text-3xl btn-hover p-2 rounded-xl glass-card">⚙️</button>
+        </div>
+    </nav>
+
+    <div id="main" class="w-full min-h-screen animated-bg flex items-center justify-center flex-col gap-4 p-7 pt-24 overflow-y-auto">
+        <!-- Header -->
+        <div class="w-full flex justify-between items-center mb-2 slide-in">
+            <div>
+                <h2 class="text-white text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">Calculator</h2>
+                <p class="text-gray-400 text-sm mt-1">Rhinestone Factory Billing Calculator</p>
+            </div>
+        </div>
+
+        <!-- SS Row -->
+        <div class="w-full glass-card rounded-2xl p-5 slide-in" style="animation-delay: 0.1s;">
+            <h3 class="text-white text-lg font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">SS Items</h3>
+            <div class="flex gap-4 flex-wrap">
+                <label class="flex items-center gap-2 text-white text-sm glass-card px-4 py-2 rounded-xl cursor-pointer btn-hover">
+                    <input type="checkbox" name="item" value="6SS" class="checkbox-custom" onchange="handleSelection()">
+                    6SS
+                </label>
+                <label class="flex items-center gap-2 text-white text-sm glass-card px-4 py-2 rounded-xl cursor-pointer btn-hover">
+                    <input type="checkbox" name="item" value="10SS" class="checkbox-custom" onchange="handleSelection()">
+                    10SS
+                </label>
+                <label class="flex items-center gap-2 text-white text-sm glass-card px-4 py-2 rounded-xl cursor-pointer btn-hover">
+                    <input type="checkbox" name="item" value="16SS" class="checkbox-custom" onchange="handleSelection()">
+                    16SS
+                </label>
+            </div>
+        </div>
+
+        <!-- Chorsi Row -->
+        <div class="w-full glass-card rounded-2xl p-5 slide-in" style="animation-delay: 0.2s;">
+            <h3 class="text-white text-lg font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-400">Chorsi Items</h3>
+            <div class="flex gap-4 flex-wrap">
+                <label class="flex items-center gap-2 text-white text-sm glass-card px-4 py-2 rounded-xl cursor-pointer btn-hover">
+                    <input type="checkbox" name="item" value="4x4" class="checkbox-custom" onchange="handleSelection()">
+                    4/4 Chorsi
+                </label>
+                <label class="flex items-center gap-2 text-white text-sm glass-card px-4 py-2 rounded-xl cursor-pointer btn-hover">
+                    <input type="checkbox" name="item" value="6x6" class="checkbox-custom" onchange="handleSelection()">
+                    6/6 Chorsi
+                </label>
+            </div>
+        </div>
+
+        <!-- Tube Row -->
+        <div class="w-full glass-card rounded-2xl p-5 slide-in" style="animation-delay: 0.3s;">
+            <h3 class="text-white text-lg font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-400">Tube Items</h3>
+            <div class="flex gap-4 flex-wrap">
+                <label class="flex items-center gap-2 text-white text-sm glass-card px-4 py-2 rounded-xl cursor-pointer btn-hover">
+                    <input type="checkbox" name="item" value="2.5x5" class="checkbox-custom" onchange="handleSelection()">
+                    2.5/5 Tube
+                </label>
+                <label class="flex items-center gap-2 text-white text-sm glass-card px-4 py-2 rounded-xl cursor-pointer btn-hover">
+                    <input type="checkbox" name="item" value="3x7" class="checkbox-custom" onchange="handleSelection()">
+                    3/7 Tube
+                </label>
+            </div>
+        </div>
+
+        <!-- Inputs Section -->
+        <div id="inputs" class="w-full glass-card rounded-2xl p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 slide-in" style="animation-delay: 0.4s;">
+            
+        </div>
+
+        <!-- Total Section -->
+        <div class="w-full total-glow rounded-2xl p-6 text-white slide-in" style="animation-delay: 0.5s;">
+            <h2 class="text-xl font-bold mb-3">Total</h2>
+            <div class="text-4xl font-bold" id="grandTotal">0.00</div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 backdrop-blur-sm">
+        <div class="glass-card rounded-2xl p-6 w-full max-w-md mx-4 slide-in">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-white text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">Settings</h2>
+                <button onclick="toggleSettings()" class="text-white text-2xl btn-hover p-2 rounded-xl glass-card">✕</button>
+            </div>
+            <div id="settingsContent" class="space-y-4">
+                <!-- Settings items will be added here -->
+            </div>
+            <button onclick="saveSettings()" class="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-bold btn-hover">Save Settings</button>
+        </div>
+    </div>
+
+    <script>
+        // Item data with prices
+        const items = {
+            '6SS': { name: '6SS', price: 0.3, currency: 'Rupa' },
+            '10SS': { name: '10SS', price: 0.5, currency: 'Rupa' },
+            '16SS': { name: '16SS', price: 0.7, currency: 'Rupa' },
+            '4x4': { name: '4/4 Chorsi', price: 0.4, currency: 'Rupa' },
+            '6x6': { name: '6/6 Chorsi', price: 0.6, currency: 'Rupa' },
+            '2.5x5': { name: '2.5/5 Tube', price: 15, currency: 'Rupa' },
+            '3x7': { name: '3/7 Tube', price: 20, currency: 'Rupa' },
+            'applic': { name: 'Applic', price: 0, currency: 'Rupa', noQty: true, inchBased: true }
+        };
+
+        // Inch-based pricing for Applic (1 inch base price)
+        let inchPrice = 2; // Default price per inch
+
+        // Manual price mode for each item
+        const manualMode = {};
+        
+        // Store input values
+        const inputValues = {};
+
+        // Load settings from localStorage
+        function loadSettings() {
+            const saved = localStorage.getItem('calculatorSettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                Object.keys(settings).forEach(key => {
+                    if (items[key]) {
+                        items[key].price = settings[key].price;
+                    }
+                });
+            }
+            
+            // Load inch price
+            const savedInchPrice = localStorage.getItem('inchPrice');
+            if (savedInchPrice) {
+                inchPrice = parseFloat(savedInchPrice);
+            }
+        }
+
+        // Toggle settings modal
+        function toggleSettings() {
+            const modal = document.getElementById('settingsModal');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                renderSettings();
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        // Render settings
+        function renderSettings() {
+            const content = document.getElementById('settingsContent');
+            content.innerHTML = '';
+            
+            // Regular items
+            Object.keys(items).forEach(key => {
+                if (key !== 'applic') {
+                    const item = items[key];
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center justify-between glass-card p-3 rounded-xl';
+                    div.innerHTML = `
+                        <label class="text-white text-sm font-bold">${item.name}</label>
+                        <input type="number" id="setting-${key}" value="${item.price}" class="w-28 input-field text-white px-4 py-2 rounded-xl" step="0.01">
+                    `;
+                    content.appendChild(div);
+                }
+            });
+
+            // Applic inch price (single price per inch)
+            const applicDiv = document.createElement('div');
+            applicDiv.className = 'glass-card p-4 rounded-xl mt-4';
+            applicDiv.innerHTML = `
+                <h3 class="text-white font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">Applic Price (per inch)</h3>
+                <div class="flex items-center justify-between">
+                    <label class="text-white text-sm">Price per inch (Rupa)</label>
+                    <input type="number" id="inch-price" value="${inchPrice}" class="w-28 input-field text-white px-4 py-2 rounded-xl" step="0.01">
+                </div>
+            `;
+            content.appendChild(applicDiv);
+        }
+
+        // Save settings
+        function saveSettings() {
+            const settings = {};
+            Object.keys(items).forEach(key => {
+                if (key !== 'applic') {
+                    const input = document.getElementById(`setting-${key}`);
+                    settings[key] = { price: parseFloat(input.value) || 0 };
+                }
+            });
+            localStorage.setItem('calculatorSettings', JSON.stringify(settings));
+            
+            // Save inch price
+            const inchPriceInput = document.getElementById('inch-price');
+            inchPrice = parseFloat(inchPriceInput.value) || 0;
+            localStorage.setItem('inchPrice', inchPrice.toString());
+            
+            loadSettings();
+            handleSelection();
+            toggleSettings();
+            alert('Settings saved!');
+        }
+
+        // Handle selection change
+        function handleSelection() {
+            // Save current input values before re-rendering
+            const qtyInputs = document.querySelectorAll('[id^="qty-"]');
+            const priceInputs = document.querySelectorAll('[id^="price-"]');
+            const dim1Inputs = document.querySelectorAll('[id^="dimension1-"]');
+            const dim2Inputs = document.querySelectorAll('[id^="dimension2-"]');
+            
+            qtyInputs.forEach(input => {
+                const itemKey = input.id.replace('qty-', '');
+                inputValues[itemKey] = { qty: input.value };
+            });
+            
+            priceInputs.forEach(input => {
+                const itemKey = input.id.replace('price-', '');
+                if (inputValues[itemKey]) {
+                    inputValues[itemKey].price = input.value;
+                }
+            });
+
+            dim1Inputs.forEach(input => {
+                const itemKey = input.id.replace('dimension1-', '');
+                if (inputValues[itemKey]) {
+                    inputValues[itemKey].dim1 = input.value;
+                }
+            });
+
+            dim2Inputs.forEach(input => {
+                const itemKey = input.id.replace('dimension2-', '');
+                if (inputValues[itemKey]) {
+                    inputValues[itemKey].dim2 = input.value;
+                }
+            });
+
+            const checkboxes = document.querySelectorAll('input[name="item"]:checked');
+            const inputsContainer = document.getElementById('inputs');
+            
+            // Save Applic input before clearing
+            const applicInput = document.getElementById('applic-input');
+            const applicToggle = document.getElementById('applicToggle');
+            
+            // Clear only non-Applic inputs
+            const allInputs = inputsContainer.querySelectorAll('div:not(#applic-input)');
+            allInputs.forEach(div => div.remove());
+
+            checkboxes.forEach(checkbox => {
+                const itemKey = checkbox.value;
+                const item = items[itemKey];
+                
+                // Skip Applic from regular item rendering
+                if (itemKey === 'applic') return;
+                
+                const savedQty = inputValues[itemKey]?.qty || '1';
+                const savedPrice = inputValues[itemKey]?.price || '';
+                
+                const inputDiv = document.createElement('div');
+                inputDiv.className = 'glass-card rounded-xl p-4 slide-in';
+                
+                // Normal items with quantity
+                inputDiv.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-white font-bold text-sm bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">${item.name}</span>
+                        <button onclick="toggleManual('${itemKey}')" class="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-xl btn-hover font-bold">
+                            ${manualMode[itemKey] ? 'Auto' : 'Manual'}
+                        </button>
+                    </div>
+                    <input type="number" 
+                           id="qty-${itemKey}" 
+                           placeholder="Quantity" 
+                           class="w-full input-field text-white px-4 py-3 rounded-xl mb-3"
+                           oninput="saveAndCalculate('${itemKey}')"
+                           value="${savedQty}">
+                    ${manualMode[itemKey] ? `
+                        <input type="number" 
+                               id="price-${itemKey}" 
+                               placeholder="Manual Price" 
+                               class="w-full input-field text-white px-4 py-3 rounded-xl"
+                               oninput="saveAndCalculate('${itemKey}')"
+                               step="0.01"
+                               value="${savedPrice}">
+                    ` : `
+                        <div class="text-gray-300 text-xs">Price: ${item.price} Rupa</div>
+                    `}
+                    <div class="text-green-400 text-sm mt-2 font-bold" id="total-${itemKey}">Total: 0</div>
+                `;
+                inputsContainer.appendChild(inputDiv);
+            });
+
+            calculateTotal();
+        }
+
+        // Save input value and calculate
+        function saveAndCalculate(itemKey) {
+            const qtyInput = document.getElementById(`qty-${itemKey}`);
+            const priceInput = document.getElementById(`price-${itemKey}`);
+            const dim1Input = document.getElementById(`dimension1-${itemKey}`);
+            const dim2Input = document.getElementById(`dimension2-${itemKey}`);
+            
+            if (!inputValues[itemKey]) {
+                inputValues[itemKey] = {};
+            }
+            
+            if (qtyInput) {
+                inputValues[itemKey].qty = qtyInput.value;
+            }
+            if (priceInput) {
+                inputValues[itemKey].price = priceInput.value;
+            }
+            if (dim1Input) {
+                inputValues[itemKey].dim1 = dim1Input.value;
+            }
+            if (dim2Input) {
+                inputValues[itemKey].dim2 = dim2Input.value;
+            }
+            
+            calculateTotal();
+        }
+
+        // Toggle manual/auto mode
+        function toggleManual(itemKey) {
+            manualMode[itemKey] = !manualMode[itemKey];
+            handleSelection();
+        }
+
+        // Toggle Applic
+        function toggleApplic() {
+            const toggle = document.getElementById('applicToggle');
+            const inputsContainer = document.getElementById('inputs');
+            
+            if (toggle.checked) {
+                // Add Applic input
+                const itemKey = 'applic';
+                const item = items[itemKey];
+                
+                const inputDiv = document.createElement('div');
+                inputDiv.id = 'applic-input';
+                inputDiv.className = 'glass-card rounded-xl p-4 col-span-2 slide-in';
+                inputDiv.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-white font-bold text-sm bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">${item.name}</span>
+                    </div>
+                    <div class="flex gap-3 mb-3">
+                        <input type="number" 
+                               id="dimension1-${itemKey}" 
+                               placeholder="Dimension 1" 
+                               class="w-full input-field text-white px-4 py-3 rounded-xl"
+                               oninput="calculateApplicDimensions('${itemKey}')"
+                               value="${inputValues[itemKey]?.dim1 || ''}">
+                        <input type="number" 
+                               id="dimension2-${itemKey}" 
+                               placeholder="Dimension 2" 
+                               class="w-full input-field text-white px-4 py-3 rounded-xl"
+                               oninput="calculateApplicDimensions('${itemKey}')"
+                               value="${inputValues[itemKey]?.dim2 || ''}">
+                    </div>
+                    <div class="text-gray-300 text-xs mb-2">Total inches: <span id="total-inches-${itemKey}">0</span></div>
+                    <div class="text-gray-300 text-xs mb-2">Price per inch: <span id="price-per-inch-${itemKey}">${inchPrice}</span> Rupa</div>
+                    <div class="text-green-400 text-sm mt-2 font-bold" id="total-${itemKey}">Total: 0</div>
+                `;
+                inputsContainer.appendChild(inputDiv);
+                
+                // Calculate if saved dimensions exist
+                if (inputValues[itemKey]?.dim1 || inputValues[itemKey]?.dim2) {
+                    calculateApplicDimensions(itemKey);
+                }
+                calculateTotal();
+            } else {
+                // Remove Applic input
+                const applicInput = document.getElementById('applic-input');
+                if (applicInput) {
+                    applicInput.remove();
+                }
+                calculateTotal();
+            }
+        }
+
+        // Calculate Applic price based on dimensions
+        function calculateApplicDimensions(itemKey) {
+            const dim1Input = document.getElementById(`dimension1-${itemKey}`);
+            const dim2Input = document.getElementById(`dimension2-${itemKey}`);
+            
+            const dim1 = parseFloat(dim1Input.value) || 0;
+            const dim2 = parseFloat(dim2Input.value) || 0;
+            const totalInches = (dim1 + dim2) / 2; // Average of dimensions for total inches
+            
+            document.getElementById(`total-inches-${itemKey}`).textContent = totalInches.toFixed(2);
+            document.getElementById(`price-per-inch-${itemKey}`).textContent = inchPrice.toFixed(2);
+            
+            inputValues[itemKey] = { dim1: dim1Input.value, dim2: dim2Input.value, totalInches: totalInches };
+            
+            calculateTotal();
+        }
+
+        // Calculate total
+        function calculateTotal() {
+            let grandTotal = 0;
+            
+            // Calculate for normal items
+            const checkboxes = document.querySelectorAll('input[name="item"]:checked');
+            checkboxes.forEach(checkbox => {
+                const itemKey = checkbox.value;
+                const item = items[itemKey];
+                
+                let itemTotal = 0;
+                
+                if (item.noQty) {
+                    // Applic: only price, no quantity
+                    const price = parseFloat(document.getElementById(`price-${itemKey}`).value) || 0;
+                    itemTotal = price;
+                } else {
+                    // Normal items: price × quantity
+                    const qty = parseFloat(document.getElementById(`qty-${itemKey}`).value) || 0;
+                    
+                    let price = item.price;
+                    if (manualMode[itemKey]) {
+                        price = parseFloat(document.getElementById(`price-${itemKey}`).value) || 0;
+                    }
+
+                    itemTotal = price * qty;
+                }
+                
+                grandTotal += itemTotal;
+
+                // Update item total display
+                document.getElementById(`total-${itemKey}`).textContent = `Total: ${itemTotal.toFixed(2)}`;
+            });
+
+            // Calculate for Applic from toggle
+            const applicToggle = document.getElementById('applicToggle');
+            if (applicToggle && applicToggle.checked) {
+                const totalInches = inputValues['applic']?.totalInches || 0;
+                const applicTotal = totalInches * inchPrice;
+                grandTotal += applicTotal;
+                if (document.getElementById('total-applic')) {
+                    document.getElementById('total-applic').textContent = `Total: ${applicTotal.toFixed(2)}`;
+                }
+            }
+
+            // Update grand total
+            document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+        }
+
+        // Initialize
+        loadSettings();
+    </script>
+</body>
+</html>
