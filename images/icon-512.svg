@@ -1,6 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#6366f1"/>
-  <rect x="60" y="60" width="392" height="392" rx="92" fill="#ffffff" opacity="0.12"/>
-  <text x="256" y="285" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="158" font-weight="700" fill="#ffffff">RC</text>
-  <text x="256" y="360" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="44" font-weight="600" fill="#e0e7ff">Calc</text>
+  <rect width="512" height="512" rx="128" fill="#0f0c29"/>
+  <circle cx="256" cy="256" r="192" fill="#6366f1"/>
+  <circle cx="256" cy="256" r="144" fill="#ffffff" opacity="0.16"/>
+  <path d="M188 176h136c24 0 44 20 44 44v72c0 24-20 44-44 44H188c-24 0-44-20-44-44v-72c0-24 20-44 44-44z" fill="#ffffff" opacity="0.95"/>
+  <rect x="220" y="208" width="72" height="24" rx="8" fill="#6366f1"/>
+  <rect x="214" y="246" width="84" height="24" rx="8" fill="#6366f1"/>
+  <rect x="208" y="284" width="90" height="24" rx="8" fill="#6366f1"/>
+  <circle cx="384" cy="154" r="24" fill="#fbbf24"/>
 </svg>

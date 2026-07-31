@@ -1,6 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="44" fill="#6366f1"/>
-  <rect x="24" y="24" width="144" height="144" rx="34" fill="#ffffff" opacity="0.12"/>
-  <text x="96" y="110" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="58" font-weight="700" fill="#ffffff">RC</text>
-  <text x="96" y="146" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="600" fill="#e0e7ff">Calc</text>
+  <rect width="192" height="192" rx="48" fill="#0f0c29"/>
+  <circle cx="96" cy="96" r="72" fill="#6366f1"/>
+  <circle cx="96" cy="96" r="54" fill="#ffffff" opacity="0.16"/>
+  <path d="M70 64h52c8 0 14 6 14 14v36c0 8-6 14-14 14H70c-8 0-14-6-14-14V78c0-8 6-14 14-14z" fill="#ffffff" opacity="0.95"/>
+  <rect x="82" y="74" width="28" height="10" rx="3" fill="#6366f1"/>
+  <rect x="80" y="92" width="32" height="10" rx="3" fill="#6366f1"/>
+  <rect x="78" y="110" width="34" height="10" rx="3" fill="#6366f1"/>
+  <circle cx="144" cy="58" r="10" fill="#fbbf24"/>
 </svg>
