@@ -229,7 +229,7 @@
         </div>
 
         <!-- Inputs Section -->
-        <div id="inputs" class="w-full glass-card rounded-2xl p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 slide-in" style="animation-delay: 0.4s;">
+        <div id="inputs" class="w-full glass-card rounded-2xl p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 slide-in" style="animation-delay: 0.4s;">
             
         </div>
 
@@ -418,34 +418,34 @@
                 const savedPrice = inputValues[itemKey]?.price || '';
                 
                 const inputDiv = document.createElement('div');
-                inputDiv.className = 'glass-card rounded-xl p-4 slide-in w-full';
+                inputDiv.className = 'glass-card rounded-xl p-3 slide-in w-full';
                 
                 // Normal items with quantity
                 inputDiv.innerHTML = `
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-white font-bold text-sm bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">${item.name}</span>
-                        <button onclick="toggleManual('${itemKey}')" class="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-xl btn-hover font-bold">
+                        <button onclick="toggleManual('${itemKey}')" class="hidden sm:inline-flex text-[10px] sm:text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white px-2 py-1 rounded-xl btn-hover font-bold">
                             ${manualMode[itemKey] ? 'Auto' : 'Manual'}
                         </button>
                     </div>
                     <input type="number" 
                            id="qty-${itemKey}" 
-                           placeholder="Quantity" 
-                           class="w-full input-field text-white px-4 py-3 rounded-xl mb-3"
+                           placeholder="Qty" 
+                           class="w-full input-field text-white px-3 py-2 sm:px-4 sm:py-3 rounded-xl mb-3"
                            oninput="saveAndCalculate('${itemKey}')"
                            value="${savedQty}">
                     ${manualMode[itemKey] ? `
                         <input type="number" 
                                id="price-${itemKey}" 
                                placeholder="Manual Price" 
-                               class="w-full input-field text-white px-4 py-3 rounded-xl"
+                               class="w-full input-field text-white px-3 py-2 sm:px-4 sm:py-3 rounded-xl"
                                oninput="saveAndCalculate('${itemKey}')"
                                step="0.01"
                                value="${savedPrice}">
                     ` : `
-                        <div class="text-gray-300 text-xs">Price: ${item.price} Rupa</div>
+                        <div class="text-gray-300 text-[12px] sm:text-xs">Price: ${item.price} Rupa</div>
                     `}
-                    <div class="text-green-400 text-sm mt-2 font-bold" id="total-${itemKey}">Total: 0</div>
+                    <div class="text-green-400 text-xs sm:text-sm mt-2 font-bold" id="total-${itemKey}">Total: 0</div>
                 `;
                 inputsContainer.appendChild(inputDiv);
             });
