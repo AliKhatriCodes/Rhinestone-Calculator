@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#6366f1"/>
+  <rect x="60" y="60" width="392" height="392" rx="92" fill="#ffffff" opacity="0.12"/>
+  <text x="256" y="285" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="158" font-weight="700" fill="#ffffff">RC</text>
+  <text x="256" y="360" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="44" font-weight="600" fill="#e0e7ff">Calc</text>
+</svg>
