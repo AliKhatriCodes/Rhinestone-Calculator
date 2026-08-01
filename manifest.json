@@ -1,17 +1,6 @@
 {
   "name": "Rhinestone Calculator",
   "short_name": "RCalc",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#0f0c29",
-  "theme_color": "#0f0c29",
-  "icons": [
-    { "src": "images/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml" }
-  ]
-}
-{
-  "name": "Rhinestone Calculator",
-  "short_name": "Calc",
   "description": "Rhinestone Factory Billing Calculator",
   "start_url": "./",
   "display": "standalone",
